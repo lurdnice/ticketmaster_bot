@@ -867,20 +867,27 @@ def main():
     # Add error handler
     application.add_error_handler(error_handler)
     
-    # Initialize database
-    async def init():
-        await db.init_db()
-    
-    # Run initialization
-    asyncio.run(init())
-    
     # Start bot
     print("🤖 Ticketmaster Norway Bot is starting...")
-    print(f"Bot @{application.bot.username if hasattr(application.bot, 'username') else 'unknown'}")
-    print("Press Ctrl+C to stop")
     
-    # Run bot
-    application.run_polling(allowed_updates=Update.ALL_TYPES)
+    # Run the bot (this handles everything in a single event loop)
+    async def run_bot():
+        await db.init_db()
+        await application.initialize()
+        await application.start()
+        await application.updater.start_polling()
+        
+        # Keep the bot running
+        try:
+            await asyncio.Event().wait()
+        finally:
+            await application.updater.stop()
+            await application.stop()
+            await application.shutdown()
+    
+    # Run the async function
+    asyncio.run(run_bot())
+
 
 if __name__ == '__main__':
     main()
