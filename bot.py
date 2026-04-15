@@ -2,7 +2,7 @@ import asyncio
 import logging
 import re
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import List, Dict, Optional
 from tenacity import retry, stop_after_attempt, wait_exponential
 
@@ -173,9 +173,6 @@ class Database:
 
 # Initialize database
 db = Database()
-
-# Import timedelta
-from datetime import timedelta
 
 class TicketmasterBot:
     def __init__(self):
@@ -876,10 +873,8 @@ def main():
     
     # Start bot
     print("🤖 Ticketmaster Norway Bot is starting...")
-    print(f"Bot @{application.bot.username if hasattr(application.bot, 'username') else 'unknown'}")
-    print("Press Ctrl+C to stop")
     
-    # Run bot
+    # Run bot - this will properly initialize everything
     application.run_polling(allowed_updates=Update.ALL_TYPES)
 
 if __name__ == '__main__':
